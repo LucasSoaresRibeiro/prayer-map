@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+<!--<![endif]-->
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Mapa da Oração da Cruzada Mundial de Literatura</title>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js" integrity="sha256-JklDYODbg0X+8sPiKkcFURb5z7RvlNMIaE3RA2z97vw=" crossorigin="anonymous"></script>
+    <script src="/js/json3.js"></script>
+    <script type="text/javascript" src="/js/general.js"></script>
+
+    <link rel="apple-touch-icon" href="/images/live-prayer-touch-icon.png" />
+    <link rel="stylesheet" href="/css/reset.css">
+    <link href='//fonts.googleapis.com/css?family=Roboto:100italic,400,700,900' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Roboto+Condensed:400italic,400,700' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/css/main.css">
+    <script src="https://js.arcgis.com/4.13/"></script>
+
+    <script src="./main.js"></script>
+    <link rel="stylesheet" href="./style.css">
+
+</head>
+
+<body>
+
+    <!-- <div id="arcGismap">
+    </div> -->
+
+    <div id="full_div" data-full="no">
+
+        <div id="prayer_watch_div">
+
+            <div id="_heading">
+                Prayer Watch <span id="_heading_live">Live</span>
+                <div id="_heading_border"></div>
+            </div>
+
+            <div id="_content">
+
+                <div id="_map">
+                    <span class="helper"></span>
+                    <img alt="Mapa Mundi" id="_country_map" src="/images/empty.jpg">
+                </div>
+
+
+
+                <div id="_prayer_request">
+
+                    <div id="_prayer_request_header">
+                        <div id="_prayer_request_title">Real Time Prayer Requests</div>
+                        <div id="_prayer_request_timer">
+                            <img alt="Tempo" src="/images/timer.png" title="Timer">
+                            <span id="timer">00:60</span>
+                        </div>
+                        <div class="clear-div"></div>
+                        <div id="_lines"></div>
+                    </div>
+
+                    <div id="_prayer_request_text">
+                        <span>Ask the Lord of the harvest, therefore, to send out workers into his harvest field.</span>
+                    </div>
+
+                </div>
+
+                <div class="clear-div"></div>
+
+            </div>
+            
+            <div id="_country_name"><span>World</span></div>
+
+            <div id="_logo"><img alt="Logo" src="/images/logo.png" title="Logo da Cruzada Mundial de Literatura">
+                <div id="_logo_lines"></div>
+            </div>
+            
+        </div>
+
+    </div>
+
+    <div id="click_message">Click for full screen</div>
+
+</body>
+
+</html>

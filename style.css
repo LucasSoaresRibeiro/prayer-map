@@ -1,0 +1,504 @@
+* {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+html {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    font-size: 100%;
+    cursor: pointer;
+    height: 100%;
+    width: 100%
+}
+
+#_heading {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    font-size: 2.0em;
+    padding-top: 5px;
+    color: rgb(117, 117, 117);
+    text-align: center;
+    text-transform: uppercase;
+    background-image: url("/images/fundo_cinza.jpg");
+    height: 50px;
+    width: 100%;
+    position: relative;
+    white-space: nowrap;
+}
+
+#_heading_border {
+    height: 8px;
+    background-image: url("/images/serrilhado.png");
+    width: 100%;
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+}
+
+#_heading_live {
+    font-weight: 400;
+    font-style: italic;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
+#_content {
+    width: 100%;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    position: absolute;
+    top: 50px;
+    bottom: 60px;
+}
+
+#_map {
+    width: 25%;
+    float: left;
+    text-align: center;
+    margin-left: 5%;
+    height: 100%;
+}
+
+#_map img {
+    max-height: 100%;
+    max-width: 100%;
+    vertical-align: middle;
+}
+
+.helper {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
+#_prayer_request {
+    width: 65%;
+    float: right;
+    height: 100%;
+    position: relative;
+    margin-top: 15px;
+}
+
+#_prayer_request_header {
+    height: 15%;
+    width: 100%;
+    position: relative;
+}
+
+#_prayer_request_title {
+    position: absolute;
+    left: 0px;
+    bottom: 14px;
+    width: 75%;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-style: italic;
+    color: rgb(217, 217, 217);
+    font-size: 1.0em;
+    white-space: nowrap;
+}
+
+#_prayer_request_timer {
+    position: absolute;
+    right: 0px;
+    bottom: 14px;
+    width: 25%;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-style: italic;
+    color: rgb(217, 217, 217);
+    font-size: 1.0em;
+    text-align: right;
+    margin-right: 3%;
+}
+
+#_prayer_request_timer img {
+    height: 12px;
+    padding-right: 2px;
+}
+
+#_lines {
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    width: 100%;
+    background-image: url("/images/fundo_listrado.png");
+    height: 10px;
+}
+
+#_prayer_request_text {
+    position: absolute;
+    top: 15%;
+    bottom: 20px;
+    left: 0px;
+    right: 0px;
+    padding: 3% 4%;
+    padding-bottom: 1%;
+    font-family: 'Roboto', sans-serif;
+    font-style: italic;
+    color: rgb(217, 217, 217);
+    font-size: .8em;
+    background-color: rgb(117, 117, 117);
+    border-radius: 3px;
+    box-shadow: 2px 3px 5px rgb(50, 50, 50);
+    line-height: 1.2;
+    font-weight: 100;
+}
+
+.clear-div {
+    clear: both;
+}
+
+#_country_name {
+    height: 50px;
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    font-size: 2em;
+    text-transform: uppercase;
+    font-weight: 700;
+    width: 75%;
+    padding-left: 5%;
+    font-family: 'Roboto Condensed', sans-serif;
+    color: rgb(217, 217, 217);
+}
+
+#_country_name span {
+    line-height: .8;
+    white-space: nowrap;
+}
+
+#_logo {
+    position: absolute;
+    bottom: 0px;
+    right: 10px;
+    height: 50px;
+    left: 80%;
+    padding-right: 10px;
+}
+
+#_logo img {
+    position: absolute;
+    right: 5px;
+    bottom: 0px;
+    max-width: 100%;
+    max-height: 80%;
+    float: right;
+    padding-bottom: 10px;
+}
+
+#_logo_lines {
+    position: absolute;
+    right: 5px;
+    bottom: 0px;
+    background-image: url("/images/fundo_listrado.png");
+    height: 10px;
+}
+
+:-webkit-full-screen #full_div {
+    width: 100%;
+    height: 100%;
+}
+
+#click_message {
+    font-size: 1.5em;
+    padding-top: 8px;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-style: italic;
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    margin-left: -150px;
+    height: 40px;
+    width: 300px;
+    overflow: hidden;
+    background-color: rgb(150, 150, 150);
+    color: rgb(255, 255, 255);
+    opacity: 0.9;
+    filter: alpha(opacity=90);
+    text-align: center;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+}
+
+#arcGismap {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-image: url("/images/fundo_azul.jpg");
+}
+
+#full_div {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-image: url("/images/fundo_azul.jpg");
+}
+
+#prayer_watch_div {
+    width: 100%;
+    height: 100%;
+}
+
+@media screen and (orientation: portrait) {
+    #_country_name {
+        width: 100%;
+        top: 70px;
+        bottom: auto;
+        text-align: center;
+        margin: 0px;
+        padding: 10px;
+        padding-bottom: 0px;
+    }
+    #_country_name span {
+        line-height: .9;
+    }
+    #_content {
+        top: 120px;
+    }
+    #_map {
+        float: none;
+        margin: 0px;
+        width: 100%;
+        height: 30%;
+    }
+    #_map img {
+        width: auto;
+        height: 100%;
+    }
+    #_prayer_request {
+        width: 80%;
+        float: none;
+        position: absolute;
+        top: 35%;
+        bottom: 0px;
+        left: 10%;
+        height: auto;
+    }
+    #_logo {
+        left: 0px;
+        width: 100%;
+        text-align: center;
+    }
+    #_logo img {
+        position: relative;
+        max-width: 100%;
+        max-height: 80%;
+        float: none;
+        padding-bottom: 10px;
+        padding-right: 10px;
+    }
+    #_logo_lines {
+        display: none;
+    }
+    #_prayer_request_timer {
+        margin-right: 0;
+    }
+    #_prayer_request_title {
+        font-size: 1.1em;
+    }
+    #_prayer_request_timer {
+        font-size: 1.1em;
+    }
+    #_prayer_request_timer img {
+        height: 15px;
+    }
+}
+
+@media screen and (min-width: 400px) {
+    #_heading {
+        font-size: 2.6em;
+        height: 60px;
+        padding-top: 4px;
+    }
+    #_content {
+        top: 60px;
+        bottom: 90px;
+    }
+    #_prayer_request_title {
+        font-size: 1.2em;
+    }
+    #_prayer_request_timer {
+        font-size: 1.2em;
+    }
+    #_prayer_request_timer img {
+        height: 16px;
+    }
+}
+
+@media screen and (orientation: portrait) and (min-width: 400px) {
+    #_country_name {
+        top: 80px;
+    }
+    #_content {
+        top: 130px;
+    }
+    #_prayer_request_title {
+        font-size: 1.4em;
+    }
+    #_prayer_request_timer {
+        font-size: 1.4em;
+    }
+    #_prayer_request_timer img {
+        height: 18px;
+    }
+}
+
+@media screen and (min-width: 600px) {
+    #_heading {
+        font-size: 3.6em;
+        height: 70px;
+        padding-top: 2px;
+    }
+    #_content {
+        top: 70px;
+        bottom: 90px;
+    }
+    #_prayer_request_title {
+        font-size: 1.6em;
+    }
+    #_prayer_request_timer {
+        font-size: 1.6em;
+    }
+    #_prayer_request_timer img {
+        height: 22px;
+    }
+    #_country_name {
+        height: 70px;
+    }
+    #_logo {
+        height: 70px;
+    }
+}
+
+@media screen and (orientation: portrait) and (min-width: 600px) {
+    #_country_name {
+        top: 100px;
+    }
+    #_content {
+        top: 180px;
+    }
+    #_prayer_request_title {
+        font-size: 2.2em;
+    }
+    #_prayer_request_timer {
+        font-size: 2.2em;
+    }
+    #_prayer_request_timer img {
+        height: 28px;
+    }
+}
+
+@media screen and (min-width: 800px) {
+    #_heading {
+        font-size: 4.6em;
+        height: 80px;
+        padding-top: 0px;
+    }
+    #_content {
+        top: 80px;
+        bottom: 90px;
+    }
+    #_prayer_request_title {
+        font-size: 2.2em;
+    }
+    #_prayer_request_timer {
+        font-size: 2.2em;
+    }
+    #_prayer_request_timer img {
+        height: 26px;
+    }
+}
+
+@media screen and (orientation: portrait) and (min-width: 800px) {
+    #_country_name {
+        top: 120px;
+    }
+    #_content {
+        top: 200px;
+    }
+    #_prayer_request_title {
+        font-size: 2.8em;
+    }
+    #_prayer_request_timer {
+        font-size: 2.8em;
+    }
+    #_prayer_request_timer img {
+        height: 32px;
+    }
+}
+
+@media screen and (min-width: 1000px) {
+    #_heading {
+        font-size: 6.4em;
+        height: 110px;
+        padding-top: 0px;
+    }
+    #_content {
+        top: 110px;
+        bottom: 120px;
+    }
+    #_prayer_request_title {
+        font-size: 2.8em;
+    }
+    #_prayer_request_timer {
+        font-size: 2.8em;
+    }
+    #_prayer_request_timer img {
+        height: 32px;
+    }
+    #_country_name {
+        height: 90px;
+    }
+    #_logo {
+        height: 90px;
+    }
+}
+
+@media screen and (orientation: portrait) and (min-width: 1000px) {
+    #_country_name {
+        top: 140px;
+    }
+    #_content {
+        top: 240px;
+    }
+    #_prayer_request_title {
+        font-size: 3.2em;
+    }
+    #_prayer_request_timer {
+        font-size: 3.2em;
+    }
+    #_prayer_request_timer img {
+        height: 36px;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    #_heading {
+        font-size: 7.8em;
+        height: 140px;
+        padding-top: 0px;
+    }
+    #_content {
+        top: 140px;
+        bottom: 140px;
+    }
+    #_prayer_request_title {
+        font-size: 3.6em;
+    }
+    #_prayer_request_timer {
+        font-size: 3.6em;
+    }
+    #_prayer_request_timer img {
+        height: 40px;
+    }
+    #_country_name {
+        height: 120px;
+    }
+    #_logo {
+        height: 120px;
+    }
+}
