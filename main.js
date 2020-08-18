@@ -2,8 +2,17 @@ var resizeTimeout = null;
 var hideMessage = null;
 var timerCounter = 0;
 
+const googleDocsId = "1QMWEANTHyzdwIH5PGTUZGw_AqOGwNX73ST0rEqRJ0W0";
+const googleDocsSheetId = "od6";
+const googleSheetsUrl = `https://spreadsheets.google.com/feeds/list/${googleDocsId}/${googleDocsSheetId}/public/values?alt=json`
+
+var map;
+var view;
+var latitude;
+var longitude;
+
 $(function () {
-    initMap();
+    initMap("_map");
     setTimer();
     getLivePrayer();
     setInterval("setTimer()", 1000);
@@ -16,10 +25,6 @@ $(function () {
     });
     hideMessage = setTimeout("$('#click_message').fadeOut('slow')", 2000);
 });
-
-function initMap(){
-
-}
 
 function sizeCountry() {
     var fontSize = 150;
@@ -82,7 +87,6 @@ function toggleFullScreen() {
     resizeAll();
 }
 
-
 function setTimer() {
     $("#timer").html("00:" + (timerCounter < 10 ? "0" : "") + timerCounter);
     timerCounter--;
@@ -94,25 +98,19 @@ function setTimer() {
 function getLivePrayer() {
     timerCounter = 60;
     $.ajax({
-        url: "live-prayer?ajax=true&url_action=get_live_prayer&country_code=" + getURLParameter("country_code"),
+        url: googleSheetsUrl,
         type: "GET",
         timeout: 10000,
-        success: function (returnText) {
-            var returnArray = processReturn(returnText);
-            if (returnArray === false) {
-                return;
-            }
-            $("#_prayer_request_text span").html(returnArray['live_prayer']);
-            $("#_country_name span").html(returnArray['country_name']);
-            $("#_country_map").attr("src", returnArray['country_map']);
-            resizeAll();
+        success: function (response) {
+            renderPrayerRequest(JSON.parse(response));
         },
         dataType: "text"
-    }
+        }
     );
 }
 
-function initMap() {
+function initMap(mapDiv) {
+
     require([
         "esri/Map",
         "esri/layers/GeoJSONLayer",
@@ -125,21 +123,11 @@ function initMap() {
         "esri/core/promiseUtils"
       ], function(Map, GeoJSONLayer, SceneView, Basemap, TileLayer, Legend, HistogramRangeSlider, histogram, promiseUtils) {
       
-      
-        /*****************************************
-         * Download Google Sheet data
-         *****************************************/
-    
-        // const docId = "1QMWEANTHyzdwIH5PGTUZGw_AqOGwNX73ST0rEqRJ0W0";
-        // const sheetId = "";
-        // const googleSheetsJson = `https://spreadsheets.google.com/feeds/list/${docId}/${sheetId}/public/values?alt=json`
-        // const sheetData = awat fetch
-      
         /*****************************************
          * Define map and view
          *****************************************/
       
-        const map = new Map({
+        map = new Map({
           basemap: new Basemap({
             baseLayers: [new TileLayer({
               url: "https://tiles.arcgis.com/tiles/nGt4QxSblgDfeJn9/arcgis/rest/services/VintageShadedRelief/MapServer",
@@ -152,8 +140,8 @@ function initMap() {
           }
         });
       
-        const view = new SceneView({
-          container: "_arcGismap",
+        view = new SceneView({
+          container: mapDiv,
           camera: {
             position: [-96.22, 15.26, 20000000],
             heading: 0,
@@ -183,206 +171,89 @@ function initMap() {
             }
           }
         });
-      
-      
-        /*****************************************
-         * Create GeoJSONLayer
-         * from the USGS earthquake feed
-         *****************************************/
-      
-        const url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson";
-      
-        const earthquakesLayer = new GeoJSONLayer({
-          url: url,
-          copyright: "USGS Earthquakes",
-          screenSizePerspectiveEnabled: false,
-          title: "Earthquakes in the last 30 days",
-          popupTemplate: {
-            title: "Earthquake Info",
-            content: "Magnitude <b>{mag}</b> {type} hit <b>{place}</b> on <b>{time}</b>",
-            fieldInfos: [
-              {
-                fieldName: "time",
-                format: {
-                  dateFormat: "short-date-short-time"
-                }
-              }
-            ]
-          }
+
+        // Remove all widgets on map
+        view.ui.components = [];
+
+        // Event on loaded
+        view.when(function(){
+            pinMap();
+          }, function(error){
+            console.error(error);
         });
-      
-        map.add(earthquakesLayer);
-      
-        // the number of earthquakes in each class is displayed in the legend
-      
-        const statDefinitions = [{
-          onStatisticField:
-            "CASE WHEN mag < 5.0 THEN 1 ELSE 0 END",
-          outStatisticFieldName: "minor",
-          statisticType: "sum"
-        }, {
-          onStatisticField:
-            "CASE WHEN mag < 7.0 AND mag >= 5.0 THEN 1 ELSE 0 END",
-          outStatisticFieldName: "medium",
-          statisticType: "sum"
-        }, {
-          onStatisticField:
-            "CASE WHEN mag >= 7.0 THEN 1 ELSE 0 END",
-          outStatisticFieldName: "major",
-          statisticType: "sum"
-        }, {
-          onStatisticField: "mag",
-          outStatisticFieldName: "total",
-          statisticType: "count"
-        }];
-      
-        // the symbol for each earthquake class is composed of multiple symbol layers
-      
-        const baseSymbolLayer = {
-          type: "icon",
-          resource: { primitive: "circle"},
-          material: { color: [245, 116, 73, 0.9] },
-          size: 3
-        };
-      
-        const secondSymbolLayer = {
-          type: "icon",
-          resource: { primitive: "circle"},
-          material: { color: [245, 116, 73, 0] },
-          outline: {color: [245, 116, 73, 0.7], size: 1},
-          size: 20
-        };
-      
-        const thirdSymbolLayer = {
-          type: "icon",
-          resource: { primitive: "circle"},
-          material: { color: [245, 116, 73, 0] },
-          outline: {color: [245, 116, 73, 0.5], size: 1},
-          size: 40
-        };
-      
-        earthquakesLayer.queryFeatures({where: "1=1", outStatistics: statDefinitions})
-          .then(function(result){
-            statResults = result.features[0].attributes;
-            const renderer = {
-              type: "class-breaks",
-              field: "mag",
-              legendOptions: {
-                title: "Legend"
-              },
-              classBreakInfos: [{
-                minValue: -2,
-                maxValue: 5,
-                symbol: {
-                  type: "point-3d",
-                  symbolLayers: [baseSymbolLayer]
-                },
-                label: annotate(statResults.minor) + " lower than 5. They don't cause any significant damage."
-              }, {
-                minValue: 5,
-                maxValue: 7,
-                symbol: {
-                  type: "point-3d",
-                  symbolLayers: [baseSymbolLayer, secondSymbolLayer]
-                },
-                label: annotate(statResults.medium) + " between 5 and 7. They can damage buildings and other structures in populated areas."
-              },
-                {
-                minValue: 7,
-                maxValue: 10,
-                symbol: {
-                  type: "point-3d",
-                  symbolLayers: [baseSymbolLayer, secondSymbolLayer, thirdSymbolLayer]
-                },
-                label: annotate(statResults.major) + " larger than 7. These earthquakes are likely to cause damage even to earthquake resistant structures."
-              }]
-            }
-            earthquakesLayer.renderer = renderer;
-          });
-      
-          function annotate(no) {
-            if (no && no !== 0) {
-              if (no === 1) {
-                return "1 earthquake";
-              }
-              return no.toString() + " earthquakes";
-            }
-            return "0 earthquakes";
-          }
-      
-        /*****************************************
-         * Create a histogram with a range slider
-         * to filter earthquakes based on magnitude
-         *****************************************/
-      
-        view.whenLayerView(earthquakesLayer).then(function(lyrView) {
-          const min = -2;
-          const max = 10;
-          histogram({
-            layer: earthquakesLayer,
-            field: "mag",
-            numBins: 30,
-            minValue: min,
-            maxValue: max
-          }).then(function(histogramResponse) {
-            const slider = new HistogramRangeSlider({
-              bins: histogramResponse.bins,
-              min: min,
-              max: max,
-              values: [min, max],
-              includedBarColor: [245, 116, 73],
-              excludedBarColor: [200, 200, 200],
-              rangeType: "between",
-              container: document.getElementById("histogram")
-            });
-      
-            slider.on(["thumb-change", "thumb-drag", "segment-drag"], function() {
-              filterByHistogramRange().catch(function(error) {
-                if (error.name !== "AbortError") {
-                  console.error(error);
-                }
-              });
-            });
-      
-            const filterByHistogramRange = promiseUtils.debounce(function() {
-              const filterClause = slider.generateWhereClause("mag");
-              lyrView.filter = {
-                where: filterClause
-              };
-              return updateHistogramCount(filterClause, slider.values);
-            });
-      
-            updateHistogramCount("1=1", [min, max]);
-          })
-          .catch(console.error);
-        });
-      
-        function updateHistogramCount(clause, values) {
-          const query = earthquakesLayer.createQuery();
-          query.where = clause;
-          query.outStatistics = statDefinitions;
-          return earthquakesLayer.queryFeatures(query)
-            .then(function(result){
-              document.getElementById("histCount").innerHTML = annotate(result.features[0].attributes.total) + " with magnitude between " + transform(values[0]) + " and " + transform(values[1]);
-            });
-        }
-      
-        function transform(number) {
-          return (Math.round(number * 100)/100).toString();
-        }
-      
-        /*****************************************
-         * Add side panel with legend and histogram
-         * to the view
-         *****************************************/
-      
-        // const sidePanelInfo = document.getElementById("sidePanelInfo");
-        // view.ui.add(sidePanelInfo, "top-right");
-      
-        // new Legend({
-        //   view: view,
-        //   container: document.getElementById("legend")
-        // });
-        
+
     });
 }
+
+function getSheetValue(sheetLine, columnName) {
+    return sheetLine[`gsx$${columnName}`].$t;
+}
+
+function renderPrayerRequest(response) {
+
+    const sheetLines = response.feed.entry;
+    const sheetLine = sheetLines[0];
+
+    const country_name = getSheetValue(sheetLine, "localidade");
+    const live_prayer = getSheetValue(sheetLine, "pedido");
+    latitude = getSheetValue(sheetLine, "latitude");
+    longitude = getSheetValue(sheetLine, "longitude");
+
+    pinMap();
+
+    $("#_prayer_request_text span").html(live_prayer);
+    $("#_country_name span").html(country_name);
+    resizeAll();
+
+}
+
+function pinMap() {
+
+    require([
+        "esri/Graphic"
+      ], function(Graphic) {
+    
+        console.log(latitude, longitude);
+
+        if (map && latitude && longitude) {
+        
+            // add graphic marker
+            var point = {
+                type: "point",
+                longitude: -71.2643,
+                latitude: 42.0909
+            };
+
+            // Create a symbol for drawing the point
+            var markerSymbol = {
+                type: "simple-marker",
+                color: [226, 119, 40]
+            };
+
+            // Create a graphic and add the geometry and symbol to it
+            var pointGraphic = new Graphic({
+                geometry: point,
+                symbol: markerSymbol
+            });
+            
+            view.graphics.add(pointGraphic);
+            
+            // zoom to result
+            var options = {
+                speedFactor: 0.1, // animation is 10 times slower than default
+                easing: "out-quint" // easing function to slow down when reaching the target
+            };
+
+            view.goTo({center: [latitude, longitude] }, options)
+            
+        }
+
+    });
+}
+
+/*
+TODO:
+- Ler linhas aleatoriamente
+- Adicionar coordenadas no mapa com simbologia
+- Fazer efeito de zoom ao trocar
+*/

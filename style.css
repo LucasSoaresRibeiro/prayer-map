@@ -16,6 +16,15 @@ body {
     width: 100%
 }
 
+#_map canvas {
+  filter: drop-shadow(16px 16px 10px rgba(0, 0, 0, 0.5));
+}
+
+#_country_name {
+    color: white;
+    filter: drop-shadow(16px 16px 10px rgba(0, 0, 0, 0.7));
+}
+
 #_heading {
     font-family: 'Roboto', sans-serif;
     font-weight: 700;
@@ -57,18 +66,20 @@ body {
 }
 
 #_map {
-    width: 25%;
+    width: 60%;
     float: left;
     text-align: center;
-    margin-left: 5%;
-    height: 100%;
+    margin-left: -10%;
+    height: 85%;
 }
 
+/* 
 #_map img {
     max-height: 100%;
     max-width: 100%;
     vertical-align: middle;
 }
+*/
 
 .helper {
     display: inline-block;
@@ -224,13 +235,6 @@ body {
     border-radius: 15px;
 }
 
-#arcGismap {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background-image: url("./images/fundo_azul.jpg");
-}
-
 #full_div {
     width: 100%;
     height: 100%;
@@ -263,12 +267,14 @@ body {
         float: none;
         margin: 0px;
         width: 100%;
-        height: 30%;
+        height: 60%;
     }
+    /*
     #_map img {
         width: auto;
         height: 100%;
     }
+    */
     #_prayer_request {
         width: 80%;
         float: none;
@@ -349,7 +355,7 @@ body {
 
 @media screen and (min-width: 600px) {
     #_heading {
-        font-size: 3.6em;
+        font-size: 3.2em;
         height: 70px;
         padding-top: 2px;
     }
