@@ -546,7 +546,7 @@ table.header-sortable th {
 }
 
 .cke_wysiwyg_frame, .cke_wysiwyg_div {
-    background: #fff url("/images/drop.png") no-repeat center center !important
+    background: #fff url("./images/drop.png") no-repeat center center !important
 }
 
 @media only screen and (max-width:1200px) {
