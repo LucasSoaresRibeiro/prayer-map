@@ -1,6 +1,7 @@
 var resizeTimeout = null;
 var hideMessage = null;
 var timerCounter = 0;
+var maxTimerCounterInSeconds = 120;
 
 const googleDocsId = "1QMWEANTHyzdwIH5PGTUZGw_AqOGwNX73ST0rEqRJ0W0";
 const googleDocsSheetId = "od6";
@@ -8,15 +9,17 @@ const googleSheetsUrl = `https://spreadsheets.google.com/feeds/list/${googleDocs
 
 var map;
 var view;
-var latitude;
-var longitude;
+var currentPrayer;
+var nextPrayer;
+var lastSheetIndex;
+var enableGlobeRotate = true;
 
 $(function () {
     initMap("_map");
     setTimer();
     getLivePrayer();
     setInterval("setTimer()", 1000);
-    setInterval("getLivePrayer()", 60000);
+    setInterval("getLivePrayer()", (maxTimerCounterInSeconds + 1) * 1000);
     $("#prayer_watch_div").click(function () {
         toggleFullScreen();
     });
@@ -88,40 +91,40 @@ function toggleFullScreen() {
 }
 
 function setTimer() {
-    $("#timer").html("00:" + (timerCounter < 10 ? "0" : "") + timerCounter);
+
+    var minutes = Math.floor(timerCounter / 60);
+    var seconds = timerCounter - minutes * 60;
+
+    $("#timer").html(`${(minutes < 10 ? "0" : "") + minutes}:${(seconds < 10 ? "0" : "") + seconds}`);
+
     timerCounter--;
     if (timerCounter < 0) {
         timerCounter = 0;
     }
 }
 
-function getLivePrayer() {
-    timerCounter = 60;
-    $.ajax({
-        url: googleSheetsUrl,
-        type: "GET",
-        timeout: 10000,
-        success: function (response) {
-            renderPrayerRequest(JSON.parse(response));
-        },
-        dataType: "text"
-        }
-    );
+function getRandomSheetLine(sheetLines) {
+    let randomIndex = Math.floor(Math.random() * sheetLines.length);
+    while (randomIndex == lastSheetIndex) {
+        randomIndex = Math.floor(Math.random() * sheetLines.length);
+    }
+    lastSheetIndex = randomIndex;
+    return sheetLines[randomIndex];
+}
+
+function getSheetValue(sheetLine, columnName) {
+    return sheetLine[`gsx$${columnName}`].$t;
 }
 
 function initMap(mapDiv) {
 
     require([
         "esri/Map",
-        "esri/layers/GeoJSONLayer",
         "esri/views/SceneView",
         "esri/Basemap",
         "esri/layers/TileLayer",
-        "esri/widgets/Legend",
-        "esri/widgets/HistogramRangeSlider",
-        "esri/renderers/smartMapping/statistics/histogram",
-        "esri/core/promiseUtils"
-      ], function(Map, GeoJSONLayer, SceneView, Basemap, TileLayer, Legend, HistogramRangeSlider, histogram, promiseUtils) {
+        "esri/core/watchUtils"
+      ], function(Map, SceneView, Basemap, TileLayer, watchUtils) {
       
         /*****************************************
          * Define map and view
@@ -155,9 +158,9 @@ function initMap(mapDiv) {
               type: "color",
               color: [0, 0, 0, 0]
             },
-            lighting: {
-              date: "Sun Jul 15 2018 21:04:41 GMT+0200 (Central European Summer Time)",
-            },
+            // lighting: {
+            //   date: "Sun Jul 15 2018 21:04:41 GMT+0200 (Central European Summer Time)",
+            // },
             starsEnabled: false,
             atmosphereEnabled: false
           },
@@ -177,7 +180,8 @@ function initMap(mapDiv) {
 
         // Event on loaded
         view.when(function(){
-            pinMap();
+            pinMap(currentPrayer.x, currentPrayer.y);
+            watchUtils.whenFalseOnce(view, "updating", rotate);
           }, function(error){
             console.error(error);
         });
@@ -185,75 +189,161 @@ function initMap(mapDiv) {
     });
 }
 
-function getSheetValue(sheetLine, columnName) {
-    return sheetLine[`gsx$${columnName}`].$t;
+/*****************************************
+ * Flow Functions
+ *****************************************/
+
+function getLivePrayer() {
+
+    timerCounter = maxTimerCounterInSeconds;
+
+    if (nextPrayer != undefined) {
+        renderPrayer(nextPrayer)
+    }
+
+    requestNextPrayer();
 }
 
-function renderPrayerRequest(response) {
+function requestNextPrayer() {
 
-    const sheetLines = response.feed.entry;
-    const sheetLine = sheetLines[0];
+    $.ajax({
+        url: googleSheetsUrl,
+        type: "GET",
+        timeout: 10000,
+        success: function (response) {
 
-    const country_name = getSheetValue(sheetLine, "localidade");
-    const live_prayer = getSheetValue(sheetLine, "pedido");
-    latitude = getSheetValue(sheetLine, "latitude");
-    longitude = getSheetValue(sheetLine, "longitude");
+            // read sheet
+            const sheetLines = JSON.parse(response).feed.entry;
+            const sheetLine = getRandomSheetLine(sheetLines);
 
-    pinMap();
+            const prayer = {
+                "locality": getSheetValue(sheetLine, "localidade"),
+                "prayer": getSheetValue(sheetLine, "pedido"),
+                "address": getSheetValue(sheetLine, "endereco")
+            }
 
-    $("#_prayer_request_text span").html(live_prayer);
-    $("#_country_name span").html(country_name);
+            // geocode address
+            geocodeAddress(prayer);
+            
+        },
+        dataType: "text"
+        }
+    );
+}
+
+function geocodeAddress(prayer) {
+
+    $.ajax({
+        url: `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?f=json&outSR=4326&maxLocations=1&SingleLine=${prayer.address}`,
+        type: "GET",
+        timeout: 10000,
+        success: function (response) {
+
+            const jsonResponse = JSON.parse(response);
+
+            if (jsonResponse.candidates.length > 0) {
+                prayer.x = jsonResponse.candidates[0].location.x;
+                prayer.y = jsonResponse.candidates[0].location.y;
+            } else {
+                prayer.x = 0;
+                prayer.y = 0;
+            }
+
+            saveNextPrayerRequest(prayer);
+            
+        },
+        dataType: "text"
+        }
+    );
+}
+
+function saveNextPrayerRequest(prayer) {
+
+    if (currentPrayer == undefined) {
+        currentPrayer = prayer;
+        renderPrayer(currentPrayer);
+        requestNextPrayer();
+    } else {
+        nextPrayer = prayer;
+    }
+
+}
+
+function renderPrayer(prayer) {
+
+    pinMap(prayer.x, prayer.y);
+    $("#_prayer_request_text span").html(prayer.prayer);
+    $("#_country_name span").html(prayer.locality);
     resizeAll();
 
 }
 
-function pinMap() {
+function pinMap(x, y) {
 
     require([
         "esri/Graphic"
       ], function(Graphic) {
+
+        if (map && x && y) {
+
+            view.graphics.removeAll();
+
+            if ( y != 0 && x != 0 ) {
+
+                // Address result
+
+                var point = {
+                    type: "point",
+                    x: x,
+                    y: y
+                };
     
-        console.log(latitude, longitude);
+                var markerSymbol = {
+                    type: "simple-marker",
+                    color: [226, 119, 40]
+                };
 
-        if (map && latitude && longitude) {
-        
-            // add graphic marker
-            var point = {
-                type: "point",
-                longitude: -71.2643,
-                latitude: 42.0909
-            };
+                var pointGraphic = new Graphic({
+                    geometry: point,
+                    symbol: markerSymbol
+                });
+                
+                view.graphics.add(pointGraphic);
+                
+                // zoom to result
+                var options = {
+                    speedFactor: 0.03, // less number is slower
+                    easing: "out-quint" // easing function to slow down when reaching the target
+                };
 
-            // Create a symbol for drawing the point
-            var markerSymbol = {
-                type: "simple-marker",
-                color: [226, 119, 40]
-            };
+                setTimeout(() => {
+                    view.goTo({center: [x, y] }, options)
+                }, 2000);
+                
+                enableGlobeRotate = false;
+                
+            } else {
 
-            // Create a graphic and add the geometry and symbol to it
-            var pointGraphic = new Graphic({
-                geometry: point,
-                symbol: markerSymbol
-            });
-            
-            view.graphics.add(pointGraphic);
-            
-            // zoom to result
-            var options = {
-                speedFactor: 0.1, // animation is 10 times slower than default
-                easing: "out-quint" // easing function to slow down when reaching the target
-            };
+                // World result
+                enableGlobeRotate = true;
 
-            view.goTo({center: [latitude, longitude] }, options)
+            }
             
         }
 
     });
 }
 
+function rotate() {
+    if (enableGlobeRotate) {
+        const camera = view.camera.clone();
+        camera.position.longitude -= 0.05;
+        view.goTo(camera, { animate: false });
+        requestAnimationFrame(rotate);
+    }
+}
+
 /*
 TODO:
-- Ler linhas aleatoriamente
-- Adicionar coordenadas no mapa com simbologia
-- Fazer efeito de zoom ao trocar
+- Trocar basemap para mapa territorial
 */
