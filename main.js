@@ -333,8 +333,8 @@ function pinMap(x, y) {
                 
                 // zoom to result
                 var options = {
-                    speedFactor: 0.03, // less number is slower
-                    easing: "out-quint" // easing function to slow down when reaching the target
+                    speedFactor: 0.15, // less number is slower
+                    easing: "in-out-coast-quadratic" // easing function to slow down when reaching the target
                 };
 
                 setTimeout(() => {
@@ -347,6 +347,7 @@ function pinMap(x, y) {
 
                 // World result
                 enableGlobeRotate = true;
+                rotate();
 
             }
             
