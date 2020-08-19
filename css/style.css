@@ -34,7 +34,7 @@ body {
     color: rgb(117, 117, 117);
     text-align: center;
     text-transform: uppercase;
-    background-image: url("./images/fundo_cinza.jpg");
+    background-image: url("./../images/fundo_cinza.jpg");
     height: 50px;
     width: 100%;
     position: relative;
@@ -43,7 +43,7 @@ body {
 
 #_heading_border {
     height: 8px;
-    background-image: url("./images/serrilhado.png");
+    background-image: url("./../images/serrilhado.png");
     width: 100%;
     position: absolute;
     left: 0px;
@@ -137,7 +137,7 @@ body {
     left: 0px;
     bottom: 0px;
     width: 100%;
-    background-image: url("./images/fundo_listrado.png");
+    background-image: url("./../images/fundo_listrado.png");
     height: 10px;
 }
 
@@ -206,7 +206,7 @@ body {
     position: absolute;
     right: 5px;
     bottom: 0px;
-    background-image: url("./images/fundo_listrado.png");
+    background-image: url("./../images/fundo_listrado.png");
     height: 10px;
 }
 
@@ -240,7 +240,7 @@ body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background-image: url("./images/fundo_azul.jpg");
+    background-image: url("./../images/fundo_azul.jpg");
 }
 
 #prayer_watch_div {
