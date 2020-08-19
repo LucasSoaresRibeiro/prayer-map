@@ -1,7 +1,7 @@
 var resizeTimeout = null;
 var hideMessage = null;
 var timerCounter = 0;
-var maxTimerCounterInSeconds = 120;
+var maxTimerCounterInSeconds = 20;
 
 const googleDocsId = "1QMWEANTHyzdwIH5PGTUZGw_AqOGwNX73ST0rEqRJ0W0";
 const googleDocsSheetId = "od6";
@@ -123,21 +123,36 @@ function initMap(mapDiv) {
         "esri/views/SceneView",
         "esri/Basemap",
         "esri/layers/TileLayer",
+        "esri/layers/VectorTileLayer",
         "esri/core/watchUtils"
-      ], function(Map, SceneView, Basemap, TileLayer, watchUtils) {
+      ], function(Map, SceneView, Basemap, TileLayer, VectorTileLayer, watchUtils) {
       
         /*****************************************
          * Define map and view
          *****************************************/
+
+        // // Relief
+        // var basemap = new Basemap({
+        //     baseLayers: [new TileLayer({
+        //       url: "https://tiles.arcgis.com/tiles/nGt4QxSblgDfeJn9/arcgis/rest/services/VintageShadedRelief/MapServer",
+        //       opacity: 0.7,
+        //       minScale: 0
+        //     })]
+        // });
+
+        // Charted Territory
+        var basemap = new Basemap({
+            baseLayers: [
+              new VectorTileLayer({
+                portalItem: {
+                  id: "4eb3dd72d8224e41bd259e952dcac3fe"
+                }
+              })
+            ]
+        });
       
         map = new Map({
-          basemap: new Basemap({
-            baseLayers: [new TileLayer({
-              url: "https://tiles.arcgis.com/tiles/nGt4QxSblgDfeJn9/arcgis/rest/services/VintageShadedRelief/MapServer",
-              opacity: 0.7,
-              minScale: 0
-            })]
-          }),
+          basemap: basemap,
           ground: {
             surfaceColor: [255, 255, 255]
           }
@@ -342,8 +357,3 @@ function rotate() {
         requestAnimationFrame(rotate);
     }
 }
-
-/*
-TODO:
-- Trocar basemap para mapa territorial
-*/
