@@ -158,9 +158,9 @@ function initMap(mapDiv) {
               type: "color",
               color: [0, 0, 0, 0]
             },
-            // lighting: {
-            //   date: "Sun Jul 15 2018 21:04:41 GMT+0200 (Central European Summer Time)",
-            // },
+            lighting: {
+              date: "Sun Jul 15 2018 21:04:41 GMT+0200 (Central European Summer Time)",
+            },
             starsEnabled: false,
             atmosphereEnabled: false
           },
@@ -321,7 +321,7 @@ function pinMap(x, y) {
                 }, 2000);
                 
                 enableGlobeRotate = false;
-                
+
             } else {
 
                 // World result
