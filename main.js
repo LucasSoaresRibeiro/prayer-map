@@ -2,6 +2,12 @@ var resizeTimeout = null;
 var hideMessage = null;
 var timerCounter = 0;
 var maxTimerCounterInSeconds = 20;
+var mapZoom = 2.5;
+
+var goToOptions = {
+    speedFactor: 0.15, // less number is slower
+    easing: "in-out-coast-quadratic" // easing function to slow down when reaching the target
+};
 
 const googleDocsId = "1QMWEANTHyzdwIH5PGTUZGw_AqOGwNX73ST0rEqRJ0W0";
 const googleDocsSheetId = "od6";
@@ -161,20 +167,17 @@ function initMap(mapDiv) {
         view = new SceneView({
           container: mapDiv,
           camera: {
-            position: [-96.22, 15.26, 20000000],
+            position: [-96.22, 15.26, 17000000],
             heading: 0,
             tilt: 0
           },
-          qualityProfile: "high",
+          qualityProfile: "medium",
           map: map,
           alphaCompositingEnabled: true,
           environment: {
             background: {
               type: "color",
               color: [0, 0, 0, 0]
-            },
-            lighting: {
-              date: "Sun Jul 15 2018 21:04:41 GMT+0200 (Central European Summer Time)",
             },
             starsEnabled: false,
             atmosphereEnabled: false
@@ -330,15 +333,16 @@ function pinMap(x, y) {
                 });
                 
                 view.graphics.add(pointGraphic);
-                
-                // zoom to result
-                var options = {
-                    speedFactor: 0.15, // less number is slower
-                    easing: "in-out-coast-quadratic" // easing function to slow down when reaching the target
-                };
 
                 setTimeout(() => {
-                    view.goTo({center: [x, y] }, options)
+
+                    view.goTo({
+                        center: [x, y],
+                        zoom: mapZoom,
+                        heading: 0,
+                        tilt: 0
+                    }, goToOptions)
+
                 }, 2000);
                 
                 enableGlobeRotate = false;
