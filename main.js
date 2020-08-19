@@ -299,7 +299,7 @@ function pinMap(x, y) {
         "esri/Graphic"
       ], function(Graphic) {
 
-        if (map && x && y) {
+        if (map) {
 
             view.graphics.removeAll();
 
@@ -313,9 +313,15 @@ function pinMap(x, y) {
                     y: y
                 };
     
+                // var markerSymbol = {
+                //     type: "simple-marker",
+                //     color: [226, 119, 40]
+                // };
+
                 var markerSymbol = {
-                    type: "simple-marker",
-                    color: [226, 119, 40]
+                    type: "web-style",
+                    styleName: "EsriIconsStyle",
+                    name: "Pushpin 3"
                 };
 
                 var pointGraphic = new Graphic({
