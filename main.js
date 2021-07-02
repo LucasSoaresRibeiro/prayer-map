@@ -1,7 +1,7 @@
 var resizeTimeout = null;
 var hideMessage = null;
 var timerCounter = 0;
-var maxTimerCounterInSeconds = 60 * 3;
+var maxTimerCounterInSeconds = 8;
 var mapZoom = 2.5;
 
 var goToOptions = {
