@@ -9,7 +9,7 @@ var goToOptions = {
     easing: "in-out-coast-quadratic" // easing function to slow down when reaching the target
 };
 
-const googleDocsId = "1QMWEANTHyzdwIH5PGTUZGw_AqOGwNX73ST0rEqRJ0W0";
+const googleDocsId = "1dQDHSLGIvlboNZ2XKFOcG4okvHEcSOPePuX3GkFIjfY";
 const googleDocsSheetId = "od6";
 const googleSheetsUrl = `https://spreadsheets.google.com/feeds/list/${googleDocsId}/${googleDocsSheetId}/public/values?alt=json`
 
