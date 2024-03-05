@@ -10,8 +10,7 @@ var goToOptions = {
 };
 
 const googleDocsId = "1dQDHSLGIvlboNZ2XKFOcG4okvHEcSOPePuX3GkFIjfY";
-const googleDocsSheetId = "od6";
-const googleSheetsUrl = `https://spreadsheets.google.com/feeds/list/${googleDocsId}/${googleDocsSheetId}/public/values?alt=json`
+const googleSheetsUrl = `https://docs.google.com/spreadsheets/d/e/${googleDocsId}/pub?gid=0&single=true&output=csv`
 
 var map;
 var view;
