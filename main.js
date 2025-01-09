@@ -1,7 +1,7 @@
 var resizeTimeout = null;
 var hideMessage = null;
 var timerCounter = 0;
-var maxTimerCounterInSeconds = 10;
+var maxTimerCounterInSeconds = 12;
 var mapZoom = 2.5;
 
 var goToOptions = {
@@ -256,8 +256,6 @@ function requestNextPrayer() {
         type: "GET",
         timeout: 10000,
         success: function (response) {
-
-            console.log(response);
 
             // read sheet
             const sheetLines = csvJSON(response);
