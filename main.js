@@ -168,7 +168,7 @@ function initMap(mapDiv) {
         view = new SceneView({
           container: mapDiv,
           camera: {
-            position: [-96.22, 15.26, 17000000],
+            position:[-53.073466889, -10.769946429, 17000000],
             heading: 0,
             tilt: 0
           },
