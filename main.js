@@ -1,7 +1,7 @@
 var resizeTimeout = null;
 var hideMessage = null;
 var timerCounter = 0;
-var maxTimerCounterInSeconds = 8;
+var maxTimerCounterInSeconds = 10;
 var mapZoom = 2.5;
 
 var goToOptions = {
@@ -9,8 +9,9 @@ var goToOptions = {
     easing: "in-out-coast-quadratic" // easing function to slow down when reaching the target
 };
 
-const googleDocsId = "1dQDHSLGIvlboNZ2XKFOcG4okvHEcSOPePuX3GkFIjfY";
-const googleSheetsUrl = `https://docs.google.com/spreadsheets/d/e/${googleDocsId}/pub?gid=0&single=true&output=csv`
+// const googleDocsId = "1dQDHSLGIvlboNZ2XKFOcG4okvHEcSOPePuX3GkFIjfY";
+// const googleSheetsUrl = `https://docs.google.com/spreadsheets/d/e/${googleDocsId}/pub?gid=0&single=true&output=csv`
+const googleSheetsUrl = "lista_oracao.csv"
 
 var map;
 var view;
@@ -118,7 +119,8 @@ function getRandomSheetLine(sheetLines) {
 }
 
 function getSheetValue(sheetLine, columnName) {
-    return sheetLine[`gsx$${columnName}`].$t;
+    // return sheetLine[`gsx$${columnName}`].$t;
+    return sheetLine[columnName];
 }
 
 function initMap(mapDiv) {
@@ -221,6 +223,32 @@ function getLivePrayer() {
     requestNextPrayer();
 }
 
+//var csv is the CSV file with headers
+function csvJSON(csv){
+
+    var lines=csv.split("\n");
+  
+    var result = [];
+
+    var headers=lines[0].split(",");
+  
+    for(var i=1;i<lines.length;i++){
+  
+        var obj = {};
+        var currentline=lines[i].split(",");
+  
+        for(var j=0;j<headers.length;j++){
+            obj[headers[j].trim()] = currentline[j].trim();
+        }
+  
+        result.push(obj);
+  
+    }
+  
+    return result; //JavaScript object
+    // return JSON.stringify(result); //JSON
+  }
+
 function requestNextPrayer() {
 
     $.ajax({
@@ -229,8 +257,10 @@ function requestNextPrayer() {
         timeout: 10000,
         success: function (response) {
 
+            console.log(response);
+
             // read sheet
-            const sheetLines = JSON.parse(response).feed.entry;
+            const sheetLines = csvJSON(response);
             const sheetLine = getRandomSheetLine(sheetLines);
 
             const prayer = {
