@@ -2,7 +2,7 @@ var resizeTimeout = null;
 var hideMessage = null;
 var timerCounter = 0;
 var maxTimerCounterInSeconds = 12;
-var mapZoom = 2.5;
+var mapZoom = 3.5;
 
 var goToOptions = {
     speedFactor: 0.15, // less number is slower
